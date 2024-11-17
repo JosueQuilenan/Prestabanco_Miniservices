@@ -8,5 +8,7 @@ spring:
           default-label: main
           uri: https://github.com/JosueQuilenan/Prestabanco_Miniservices
           search-paths: config-data
+          username: ${GIT_USERNAME}
+          password: ${GIT_PASSWORD}
   application:
     name: config-service
