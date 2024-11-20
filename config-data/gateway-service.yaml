@@ -45,4 +45,3 @@ spring:
           uri: lb://loan-type-service
           predicates:
             - Path=/api/loanType/**
-            - Path=/api/calculator/**
