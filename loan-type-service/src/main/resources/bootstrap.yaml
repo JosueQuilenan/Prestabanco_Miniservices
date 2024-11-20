@@ -6,7 +6,7 @@ spring:
       enabled: true
       uri: http://localhost:8081
   datasource:
-    url: jdbc:postgresql://localhost:5432/prestabanco_microservices
+    url: jdbc:postgresql://localhost:5432/prestabanco_loan-types
     username: postgres
     password: admin
   jpa:

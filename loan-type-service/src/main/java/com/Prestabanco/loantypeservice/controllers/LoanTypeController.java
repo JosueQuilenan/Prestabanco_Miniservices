@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/loanType")
-
 public class LoanTypeController {
     final LoanTypeService loanTypeService;
     public LoanTypeController(LoanTypeService loanTypeService) {

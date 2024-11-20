@@ -37,10 +37,6 @@ spring:
           uri: lb://credit-evaluation-service
           predicates:
             - Path=/api/creditEvaluation/**
-        - id: simulation-service
-          uri: lb://simulation-service
-          predicates:
-            - Path=/api/simulation/**
         - id: credit-follow-up-service
           uri: lb://creditFollowUp-service
           predicates:

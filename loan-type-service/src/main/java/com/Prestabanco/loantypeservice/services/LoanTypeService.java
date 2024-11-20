@@ -45,7 +45,6 @@ public class LoanTypeService {
         }
     }
 
-
     @PostConstruct
     public void init() {
         if (loanTypeRepository.count() == 0) {
