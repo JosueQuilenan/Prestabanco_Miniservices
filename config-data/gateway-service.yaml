@@ -38,9 +38,9 @@ spring:
           predicates:
             - Path=/api/creditEvaluation/**
         - id: credit-follow-up-service
-          uri: lb://creditFollowUp-service
+          uri: lb://credit-follow-up-service
           predicates:
-            - Path=/api/credit-follow-up/**
+            - Path=/api/creditFollowUp/**
         - id: loan-type-service
           uri: lb://loan-type-service
           predicates:
