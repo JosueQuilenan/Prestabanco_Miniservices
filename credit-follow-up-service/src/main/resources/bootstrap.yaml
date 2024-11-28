@@ -1,6 +1,6 @@
 spring:
   application:
-    name: credit-evaluation-service
+    name: credit-follow-up-service
   cloud:
     config:
       enabled: true
