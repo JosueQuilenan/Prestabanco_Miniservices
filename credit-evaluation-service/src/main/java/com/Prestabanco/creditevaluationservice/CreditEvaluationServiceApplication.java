@@ -6,10 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class CreditEvaluationService {
+public class CreditEvaluationServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CreditEvaluationService.class, args);
+		SpringApplication.run(CreditEvaluationServiceApplication.class, args);
 	}
 
 }

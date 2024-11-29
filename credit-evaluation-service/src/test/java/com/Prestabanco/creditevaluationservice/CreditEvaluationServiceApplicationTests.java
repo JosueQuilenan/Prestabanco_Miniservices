@@ -1,10 +1,10 @@
-package com.Prestabanco.credifollowupservice;
+package com.Prestabanco.creditevaluationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CreditFollowUpServiceTests {
+class CreditEvaluationServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
