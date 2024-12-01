@@ -27,9 +27,6 @@ public class Client {
     private LocalDate birthDate;
     private boolean isIndependentWorker;
 
-    @JsonManagedReference(value = "client-credit-applications")
-    @OneToMany(mappedBy = "client")
-    private List<CreditApplication> creditApplications;
 
     @JsonManagedReference(value = "client-credit-history")
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)

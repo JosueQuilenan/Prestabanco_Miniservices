@@ -5,5 +5,10 @@ spring:
     config:
       enabled: true
       uri: http://localhost:8081
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/prestabanco_credit-follow-ups
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update

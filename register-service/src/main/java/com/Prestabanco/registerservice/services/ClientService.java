@@ -83,7 +83,7 @@ public class ClientService {
     }
 
     public List<CreditApplication> getCreditApplicationsByClientId(Long clientId) {
-        String url = "http://credit-application-service/api/application/byClient/" + clientId;
+        String url = "http://credit-application-service/api/application/byClient?clientId="+ clientId;
 
         try {
             ResponseEntity<CreditApplication[]> response =

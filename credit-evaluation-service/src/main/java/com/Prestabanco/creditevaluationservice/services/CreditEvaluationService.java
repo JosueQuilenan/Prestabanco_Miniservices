@@ -1,6 +1,8 @@
 package com.Prestabanco.creditevaluationservice.services;
 
+import com.Prestabanco.creditevaluationservice.entities.Evaluation;
 import com.Prestabanco.creditevaluationservice.models.*;
+import com.Prestabanco.creditevaluationservice.repositories.EvaluationRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpHeaders;
@@ -11,29 +13,29 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Map;
-import java.util.HashMap;
 
 @Service
 public class CreditEvaluationService {
 
     private final RestTemplate restTemplate;
+    private final EvaluationRepository evaluationRepository;
 
-    public CreditEvaluationService(RestTemplate restTemplate) {
+    public CreditEvaluationService(RestTemplate restTemplate, EvaluationRepository evaluationRepository) {
         this.restTemplate = restTemplate;
+        this.evaluationRepository = evaluationRepository;
     }
 
     // R1 Client Fee to Income ratio ( Required )
     private boolean evalFeeToIncome(CreditApplication creditApplication) {
         double clientIncome = creditApplication.getIncomeProof().getAverageIncomeAmount();
         double requestedAmount = creditApplication.getRequestedAmount();
-        Double monthlyPayment = fetchMonthlyPayment(requestedAmount,creditApplication.getRequiredMonths(),creditApplication.getLoanType().getLoanTypeName());
+        Double monthlyPayment = fetchMonthlyPayment(requestedAmount,creditApplication.getRequiredMonths(),creditApplication.getLoanTypeName());
         return (monthlyPayment * 100 / clientIncome) <= 35.00;
     }
 
     // R2 Client credit History
     public boolean evalCreditHistory(CreditApplication creditApplication){
-        Client client = fetchClient(creditApplication.getClient().getId());
+        Client client = fetchClient(creditApplication.getClientId());
         CreditHistory creditHistory = client.getCreditHistory();
         if (creditHistory == null ) {
             return false;
@@ -45,7 +47,7 @@ public class CreditEvaluationService {
 
     // R3 Client Job Stability ( Required )
     public boolean evalJobStability(CreditApplication creditApplication, Boolean executiveDecision){
-        Client client = fetchClient(creditApplication.getClient().getId());
+        Client client = fetchClient(creditApplication.getClientId());
         IncomeProof incomeProof = creditApplication.getIncomeProof();
         if (client.isIndependentWorker() && incomeProof.getPdfFiles() != null){
             return executiveDecision;
@@ -64,7 +66,7 @@ public class CreditEvaluationService {
         CreditHistory creditHistory = client.getCreditHistory();
         if (creditHistory == null) return false;
         double totalDebt = creditHistory.getPendingAmount();
-        Double monthlyPayment = fetchMonthlyPayment(totalDebt,creditApplication.getRequiredMonths(),creditApplication.getLoanType().getLoanTypeName());
+        Double monthlyPayment = fetchMonthlyPayment(totalDebt,creditApplication.getRequiredMonths(),creditApplication.getLoanTypeName());
         double totalMonthlyDebt = totalDebt + monthlyPayment;
         double debtToIncomeRatio = totalMonthlyDebt / clientIncome;
         return debtToIncomeRatio <= 0.50;
@@ -72,12 +74,13 @@ public class CreditEvaluationService {
 
     // R5 Max Financing Amount ( Required )
     private boolean evalMaxFinancingAmount(CreditApplication creditApplication){
-        return creditApplication.getRequestedAmount() <= creditApplication.getValuationCertificate().getPropertyValue().doubleValue() * (creditApplication.getLoanType().getMaxAmountFinancing());
+        LoanType loanType = fetchLoanType(creditApplication.getLoanTypeName());
+        return creditApplication.getRequestedAmount() <= creditApplication.getValuationCertificate().getPropertyValue().doubleValue() * (loanType.getMaxAmountFinancing());
     }
 
     // R6 Client Age ( Required )
     private boolean evalAge(CreditApplication creditApplication, Client client){
-        LoanType loanType = creditApplication.getLoanType();
+        LoanType loanType = fetchLoanType(creditApplication.getLoanTypeName());
         if (client.getBirthDate() == null){
             return false;
         }
@@ -119,7 +122,7 @@ public class CreditEvaluationService {
 
     // R7 Saving capacity
     public String evalSavingCapacity(CreditApplication creditApplication, boolean R72Decision, boolean R73Decision, boolean R75Decision){
-        Client client = fetchClient(creditApplication.getClient().getId());
+        Client client = fetchClient(creditApplication.getClientId());
         SavingsAccount savingsAccount = client.getSavingsAccount();
         double requestedAmount = creditApplication.getRequestedAmount();
         int positiveEvaluations =
@@ -140,7 +143,7 @@ public class CreditEvaluationService {
 
     // Initial Decision (E3)
     public void preApprovedDecision(CreditApplication creditApplication){
-        Client client = fetchClient(creditApplication.getClient().getId());
+        Client client = fetchClient(creditApplication.getClientId());
 
         if( evalFeeToIncome(creditApplication) &&
                 evalDebtToIncome(creditApplication, client) &&
@@ -157,7 +160,7 @@ public class CreditEvaluationService {
         String url =  "http://loan-type-service/api/loanType/calculateMonthlyPayment?requestedAmount=" + reqAmount + "&requestedMonths="+reqMonths+"&loanTypeName="+loanType;
         Double monthlyPayment;
         try{
-            ResponseEntity<Double> response = restTemplate.getForEntity(url, Double.class);
+            ResponseEntity<Double> response = restTemplate.postForEntity(url,null, Double.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 monthlyPayment = response.getBody();
             }
@@ -189,23 +192,49 @@ public class CreditEvaluationService {
     }
 
     private void changeCreditState(Long applicationId, int state) {
-        String url = "http://credit-application-service/api/application/updateState/" + applicationId;
+        String url = "http://credit-application-service/api/application/updateState/" + applicationId + "?state=" + state;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, Integer> body = new HashMap<>();
-        body.put("state", state);
 
-        HttpEntity<Map<String, Integer>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
         try {
             ResponseEntity<CreditApplication> response = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, CreditApplication.class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("El estado se cambió exitosamente");
+                System.out.println("El estado se cambió exitosamente huehue");
+                String actionDescription = "";
+                if (state == 2) actionDescription = "In evaluation, by automated system";
+                else if (state == 6) actionDescription = "Rejected, by automated system";
+
+                Evaluation evaluation = new Evaluation();
+                evaluation.setIdCreditApplication(applicationId);
+                evaluation.setAction(actionDescription);
+                evaluation.setActionDate(LocalDate.now());
+                evaluationRepository.save(evaluation);
+
             } else {
                 throw new RuntimeException("Fallo al cambiar el estado: " + response.getStatusCode());
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al llamar a CreditApplicationService: " + e.getMessage(), e);
         }
+    }
+
+    private LoanType fetchLoanType(String loanTypeName){
+        String url= "http://loan-type-service/api/loanType/byLoanType?loanTypeName=" + loanTypeName;
+        LoanType loanType;
+
+        try{
+            ResponseEntity<LoanType> response = restTemplate.getForEntity(url, LoanType.class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                loanType= response.getBody();
+            }
+            else{
+                throw new RuntimeException("Failed to fetch loan Type " + loanTypeName);
+            }
+        }catch (Exception e){
+            throw new RuntimeException("Error while calling LoanTypeService: " + e.getMessage(), e);
+        }
+        return loanType;
     }
 }

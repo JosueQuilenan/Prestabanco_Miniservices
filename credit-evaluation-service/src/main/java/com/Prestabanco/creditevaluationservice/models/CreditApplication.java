@@ -37,14 +37,9 @@ public class CreditApplication {
     // Agregar años que quiere (seleccionar entre el rango de loanType)
     private int requiredMonths;
 
-    @JsonBackReference(value = "client-credit-applications")
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
+    private Long clientId;
 
-    @ManyToOne
-    @JoinColumn(name = "loan_type_id")
-    private LoanType loanType;
+    private String loanTypeName;
 
     @JsonManagedReference(value = "credit-application-business-financial-statement")
     @OneToOne(mappedBy = "creditApplication", cascade = CascadeType.ALL)
