@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import creditApplicationService from '../services/creditApplication.service';
 import clientService from '../services/client.service';
 import loanTypeService from "../services/loanType.service.js";
+import creditEvaluationService from "../services/creditEvaluation.service.js";
 
 const CreditApplicationApproval = () => {
     const { id } = useParams();
@@ -69,7 +70,7 @@ const CreditApplicationApproval = () => {
             creditApplication.comment = `Fecha de firma contrato propuesta: ${proposedContractDate.toString}`;
             console.log("Solicitud a enviar: ",creditApplication);
             try {
-                await creditApplicationService.updateState(creditApplication.id, 5);
+                await creditEvaluationService.updateCommentAndState(creditApplication, `Fecha de firma contrato propuesta: ${proposedContractDate.toString}`, 5);
                 console.log('Aprobación exitosa');
                 navigate("/creditApplications");
             } catch (error) {

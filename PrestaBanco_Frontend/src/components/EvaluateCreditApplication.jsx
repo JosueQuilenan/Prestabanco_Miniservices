@@ -4,7 +4,6 @@ import creditApplicationService from '../services/creditApplication.service';
 import { useNavigate } from 'react-router-dom';
 import creditEvaluationService from "../services/creditEvaluation.service.js";
 import clientService from "../services/client.service.js";
-import loanTypeService from "../services/loanType.service.js";
 
 const EvaluateCreditApplication = () => {
     const { id } = useParams();
@@ -88,8 +87,8 @@ const EvaluateCreditApplication = () => {
 
     const handleConfirm = async () => {
         try {
-            creditApplication.comment = rejectionComment; 
-            await creditApplicationService.updateState(creditApplication.id, 3); 
+            creditApplication.comment = rejectionComment;
+            await creditEvaluationService.updateCommentAndState(creditApplication, rejectionComment, 3);
             navigate('/creditApplications'); 
         } catch (error) {
             console.error("Error al pre-aprobar la solicitud:", error);
@@ -112,8 +111,7 @@ const EvaluateCreditApplication = () => {
 
     const handleRejectConfirm = async () => {
         try {
-            creditApplication.comment = "En espera de confirmación del usuario"; 
-            await creditApplicationService.updateState(creditApplication.id, 6); 
+            await creditEvaluationService.updateCommentAndState(creditApplication, "En espera de confirmación del usuario", 6);
             navigate('/creditApplications'); 
         } catch (error) {
             console.error("Error al rechazar la solicitud:", error);
@@ -135,7 +133,7 @@ const EvaluateCreditApplication = () => {
     const handlePendingDocsConfirm = async () => {
         try {
             creditApplication.comment = pendingDocsComment; 
-            await creditApplicationService.updateState(creditApplication.id, 1); 
+            await creditEvaluationService.updateCommentAndState(creditApplication, pendingDocsComment, 1);
             navigate('/creditApplications'); 
         } catch (error) {
             console.error("Error al cambiar solicitud a documentación pendiente:", error);

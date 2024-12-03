@@ -29,9 +29,9 @@ const UpdateCreditApplication = () => {
         try {
             const response = await creditApplicationService.get(id);
             const applicationData = response.data;
-            setLoanType(applicationData.loanType);
+            setLoanType(applicationData.loanTypeName);
             setRequestedAmount(applicationData.requestedAmount);
-            setLoanDocuments(applicationData.loanType.loanTypeName);
+            setLoanDocuments(applicationData.loanTypeName);
             setCreditApplication(response.data);
             const loadedDocuments = {};
             for (const docType in applicationData) {
@@ -120,7 +120,7 @@ const UpdateCreditApplication = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(creditApplication.loanType);
+        console.log(creditApplication.loanTypeName);
         try {
             let creditApplicationToUpdate = {
                 id,
@@ -168,7 +168,7 @@ const UpdateCreditApplication = () => {
             </div>
             <div>
                 <label>Loan Type:</label>
-                <p>{loanType.loanTypeName || "Cargando..."}</p>
+                <p>{creditApplication.loanTypeName || "Cargando..."}</p>
             </div>
 
             <label>

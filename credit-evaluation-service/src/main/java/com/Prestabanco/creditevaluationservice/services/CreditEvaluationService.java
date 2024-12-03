@@ -237,4 +237,9 @@ public class CreditEvaluationService {
         }
         return loanType;
     }
+
+    public void updateAndAddComment(CreditApplication creditApplication, String comment, int state){
+        creditApplication.setComment(comment);
+        changeCreditState(creditApplication.getId(),state);
+    }
 }

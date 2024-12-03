@@ -42,4 +42,12 @@ public class CreditEvaluationController {
         boolean result = creditEvaluationService.evalCreditHistory(creditApplication);
         return ResponseEntity.ok(result);
     }
+
+    @PutMapping("/evaluate")
+    public ResponseEntity<CreditApplication> evaluate(@RequestBody CreditApplication creditApplication,
+                                                      @RequestParam String comment,
+                                                      @RequestParam int state) {
+        creditEvaluationService.updateAndAddComment(creditApplication, comment, state);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -16,4 +16,8 @@ const evaluateCreditHistory = (creditApplication) => {
     return httpClient.post("/api/creditEvaluation/evaluateCreditHistory", creditApplication);
 }
 
-export default { preApprovedDecision, evaluateSavingCapacity, evaluateJobStability, evaluateCreditHistory };
+const updateCommentAndState = (creditApplication,comment,state) => {
+    return httpClient.put(`/api/creditEvaluation/evaluate?comment=${comment}&state=${state}`, creditApplication)
+}
+
+export default { preApprovedDecision, evaluateSavingCapacity, evaluateJobStability, evaluateCreditHistory, updateCommentAndState };
