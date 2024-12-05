@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: loan-type-db-pv
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/loan-type-db-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: loan-type-db-pvc
+  labels:
+    app: postgres
+    tier: database
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loan-type-db-deployment
+  labels:
+    app: loan-type-db-deployment
+    tier: database
+spec:
+  selector:
+    matchLabels:
+      app: loan-type-db-deployment
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: loan-type-db-deployment
+        tier: database
+    spec:
+      containers:
+        - name: loan-type-db
+          image: postgres
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_LOAN_TYPE
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_LOAN_TYPE
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: loan-type-db-data
+      volumes:
+        - name: loan-type-db-data
+          persistentVolumeClaim:
+            claimName: loan-type-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loan-type-db-service
+  labels:
+    app: loan-type-db-service
+    tier: database
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app: loan-type-db-deployment
+    tier: database
+  type: LoadBalancer

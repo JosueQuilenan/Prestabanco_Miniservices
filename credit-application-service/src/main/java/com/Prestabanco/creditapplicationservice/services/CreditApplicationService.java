@@ -33,13 +33,13 @@ public class CreditApplicationService {
     }
 
     public CreditApplication saveCreditApplication(CreditApplication creditApplication) {
-        return creditApplicationRepository.save(creditApplication);
-    }
-
-    public CreditApplication updateCreditApplication(CreditApplication creditApplication) {
         CreditApplication updatedApplication = creditApplicationRepository.save(creditApplication);
         checkAndUpdateDocumentationStatus(updatedApplication, updatedApplication.getApplicationState());
         return creditApplicationRepository.save(updatedApplication);
+    }
+
+    public CreditApplication updateCreditApplication(CreditApplication creditApplication) {
+        return creditApplicationRepository.save(creditApplication);
     }
 
     public void updateCreditApplicationState(CreditApplication creditApplication, int state) {

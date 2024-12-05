@@ -94,6 +94,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>prestabanco-loan-type</finalName>
 	</build>
 
 </project>

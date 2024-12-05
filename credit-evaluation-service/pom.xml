@@ -94,6 +94,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>prestabanco-credit-evaluation</finalName>
 	</build>
 
 </project>

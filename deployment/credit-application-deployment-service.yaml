@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit-application
+  labels:
+    app: credit-application-deployment
+spec:
+  selector:
+    matchLabels:
+      app: credit-application-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: credit-application-pod
+    spec:
+      containers:
+        - name: credit-application
+          image: quasaride/prestabanco-credit-application
+          ports:
+            - containerPort: 8091
+          env:
+            - name: SERVER_PORT
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_CREDIT_APPLICATION
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_CREDIT_APPLICATION
+            - name: DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_DBNAME_CREDIT_APPLICATION
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_CREDIT_APPLICATION
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_CREDIT_APPLICATION

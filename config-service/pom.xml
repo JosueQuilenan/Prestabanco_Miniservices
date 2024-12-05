@@ -52,6 +52,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>prestabanco-config</finalName>
 	</build>
-
 </project>
