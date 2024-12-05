@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: credit-follow-up
+  name: credit-follow-up-deployment
   labels:
     app: credit-follow-up-deployment
 spec:
@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: credit-follow-up-pod
+        app: credit-follow-up-deployment
     spec:
       containers:
         - name: credit-follow-up
