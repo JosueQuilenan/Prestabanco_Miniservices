@@ -81,7 +81,7 @@ metadata:
     tier: database
 spec:
   ports:
-    - port: 5432
+    - port: 5434
       targetPort: 5432
       protocol: TCP
   selector:

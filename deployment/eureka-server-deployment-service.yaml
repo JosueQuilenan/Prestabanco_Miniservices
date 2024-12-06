@@ -15,7 +15,7 @@ spec:
         app: eureka-server-deployment
     spec:
       containers:
-        - name: eureka-server
+        - name: eureka-service
           image: quasaride/prestabanco-eureka
           ports:
             - containerPort: 8761

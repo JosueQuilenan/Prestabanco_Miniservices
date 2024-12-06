@@ -5,18 +5,18 @@ metadata:
   labels:
     app: postgres-config-map
 data:
-  DB_HOST_CREDIT_APPLICATION: "credit-application-service"
+  DB_HOST_CREDIT_APPLICATION: "credit-application-db-service"
   DB_PORT_CREDIT_APPLICATION: "5432"
   DB_DBNAME_CREDIT_APPLICATION: "prestabanco_credit-applications"
-  DB_HOST_CREDIT_EVALUATION: "credit-evaluation-service"
+  DB_HOST_CREDIT_EVALUATION: "credit-evaluation-db-service"
   DB_PORT_CREDIT_EVALUATION: "5433"
   DB_DBNAME_CREDIT_EVALUATION: "prestabanco_credit-evaluations"
-  DB_HOST_CREDIT_FOLLOW_UP: "credit-follow-up-service"
+  DB_HOST_CREDIT_FOLLOW_UP: "credit-follow-up-db-service"
   DB_PORT_CREDIT_FOLLOW_UP: "5434"
   DB_DBNAME_CREDIT_FOLLOW_UP: "prestabanco_credit-follow-ups"
-  DB_HOST_LOAN_TYPE: "loan-type-service"
+  DB_HOST_LOAN_TYPE: "loan-type-db-service"
   DB_PORT_LOAN_TYPE: "5435"
   DB_DBNAME_LOAN_TYPE: "prestabanco_loan-type"
-  DB_HOST_REGISTER: "register-service"
+  DB_HOST_REGISTER: "register-db-service"
   DB_PORT_REGISTER: "5436"
   DB_DBNAME_REGISTER: "prestabanco_clients"

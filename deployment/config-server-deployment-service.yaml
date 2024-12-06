@@ -15,10 +15,21 @@ spec:
         app: config-server-deployment
     spec:
       containers:
-        - name: config-server
-          image: quasairde/prestabanco-config
+        - name: config-service
+          image: quasaride/prestabanco-config
           ports:
             - containerPort: 8081
+          env:
+            - name: GIT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: git-credentials
+                  key: username
+            - name: GIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: git-credentials
+                  key: password
 ---
 apiVersion: v1
 kind: Service
