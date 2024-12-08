@@ -47,3 +47,18 @@ spec:
                 secretKeyRef:
                   name: postgres-credentials
                   key: DB_PASSWORD_CREDIT_APPLICATION
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: credit-application-service
+  labels:
+    app: credit-application-service
+spec:
+  selector:
+    app: credit-application-deployment
+  ports:
+    - protocol: TCP
+      port: 8092
+      targetPort: 8092
+  type: NodePort

@@ -47,3 +47,18 @@ spec:
                 secretKeyRef:
                   name: postgres-credentials
                   key: DB_PASSWORD_REGISTER
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: register-service
+  labels:
+    app: register-service
+spec:
+  selector:
+    app: register-deployment
+  ports:
+    - protocol: TCP
+      port: 8091
+      targetPort: 0
+  type: NodePort

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const prestaBancoBackendServer = import.meta.env.VITE_PRESTABANCO_BACKEND_SERVER || 'gateway-server-service';
-const prestaBancoBackendPort = import.meta.env.VITE_PRESTABANCO_BACKEND_PORT || '8080';
+const prestaBancoBackendServer = import.meta.env.VITE_PRESTABANCO_BACKEND_SERVER;
+const prestaBancoBackendPort = import.meta.env.VITE_PRESTABANCO_BACKEND_PORT;
 
 export default axios.create({
     baseURL: `http://${prestaBancoBackendServer}:${prestaBancoBackendPort}`,
@@ -9,3 +9,5 @@ export default axios.create({
         'Content-Type': 'application/json'
     }
 });
+
+console.log(`http://${prestaBancoBackendServer}:${prestaBancoBackendPort}`);

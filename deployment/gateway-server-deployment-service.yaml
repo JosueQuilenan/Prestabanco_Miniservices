@@ -15,7 +15,7 @@ spec:
         app: gateway-server-deployment
     spec:
       containers:
-        - name: gateway-server
+        - name: gateway-service
           image: quasaride/prestabanco-gateway
           ports:
             - containerPort: 8080
@@ -33,4 +33,4 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-  type: LoadBalancer
+  type: NodePort
