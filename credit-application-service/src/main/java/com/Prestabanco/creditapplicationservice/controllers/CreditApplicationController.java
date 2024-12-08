@@ -43,7 +43,7 @@ public class CreditApplicationController {
     public ResponseEntity<CreditApplication> updateCreditApplicationById(@PathVariable Long id, @RequestBody CreditApplication creditApplication){
         creditApplication.setId(id);
         CreditApplication updatedCreditApplication = creditApplicationService.updateCreditApplication(creditApplication);
-        return ResponseEntity.ok(creditApplicationService.updateCreditApplication(updatedCreditApplication));
+        return ResponseEntity.ok(updatedCreditApplication);
     }
 
     @PutMapping("/updateState/{id}")

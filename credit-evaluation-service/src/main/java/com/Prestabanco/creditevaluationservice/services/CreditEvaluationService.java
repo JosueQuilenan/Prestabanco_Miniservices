@@ -149,10 +149,12 @@ public class CreditEvaluationService {
                 evalDebtToIncome(creditApplication, client) &&
                 evalMaxFinancingAmount(creditApplication) &&
                 evalAge(creditApplication, client)){
-            changeCreditState(creditApplication.getId(),2);
+            creditApplication.setApplicationState(2);
+            updateCreditApplication(creditApplication);
         }
         else{
-            changeCreditState(creditApplication.getId(),6);
+            creditApplication.setApplicationState(6);
+            updateCreditApplication(creditApplication);
         }
     }
 
@@ -191,23 +193,23 @@ public class CreditEvaluationService {
         return client;
     }
 
-    private void changeCreditState(Long applicationId, int state) {
-        String url = "http://credit-application-service/api/application/updateState/" + applicationId + "?state=" + state;
+    private void updateCreditApplication(CreditApplication creditApplication) {
+        String url = "http://credit-application-service/api/application/update/" + creditApplication.getId();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<CreditApplication> requestEntity = new HttpEntity<>(creditApplication, headers);
 
         try {
             ResponseEntity<CreditApplication> response = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, CreditApplication.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 System.out.println("El estado se cambió exitosamente huehue");
                 String actionDescription = "";
-                if (state == 2) actionDescription = "In evaluation, by automated system";
-                else if (state == 6) actionDescription = "Rejected, by automated system";
+                if (creditApplication.getApplicationState() == 2) actionDescription = "In evaluation, by automated system";
+                else if (creditApplication.getApplicationState() == 6) actionDescription = "Rejected, by automated system";
 
                 Evaluation evaluation = new Evaluation();
-                evaluation.setIdCreditApplication(applicationId);
+                evaluation.setIdCreditApplication(creditApplication.getId());
                 evaluation.setAction(actionDescription);
                 evaluation.setActionDate(LocalDate.now());
                 evaluationRepository.save(evaluation);
@@ -240,6 +242,7 @@ public class CreditEvaluationService {
 
     public void updateAndAddComment(CreditApplication creditApplication, String comment, int state){
         creditApplication.setComment(comment);
-        changeCreditState(creditApplication.getId(),state);
+        creditApplication.setApplicationState(state);
+        updateCreditApplication(creditApplication);
     }
 }
