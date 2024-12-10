@@ -200,7 +200,7 @@ const ClientDetails = () => {
                                 <tr key={application.id}>
                                     <td>{application.id}</td>
                                     <td>{application.requestedAmount}</td>
-                                    <td>{application.requestedMonths}</td>
+                                    <td>{application.requiredMonths}</td>
                                     <td>{creditApplicationStates[application.applicationState] || "Estado Desconocido"}</td>
                                     <td>{application.comment || "Sin comentarios"}</td>
                                     <td>{application.applicationDate}</td>

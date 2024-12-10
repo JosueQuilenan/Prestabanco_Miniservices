@@ -17,7 +17,7 @@ public class PdfFileCredit {
     @Column(unique=true, nullable=false)
     private Long id;
 
-    private byte[] PdfFileCredit;
+    private byte[] PdfFile;
 
     @JsonBackReference(value = "business-financial-statement-pdf-files")
     @ManyToOne

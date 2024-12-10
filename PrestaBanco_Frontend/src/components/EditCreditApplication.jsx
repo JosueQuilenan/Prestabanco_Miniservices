@@ -3,9 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import creditApplicationService from '../services/creditApplication.service';
 
 const UpdateCreditApplication = () => {
-    const [loanType, setLoanType] = useState('');
     const [creditApplication, setCreditApplication] = useState('');
     const [requestedAmount, setRequestedAmount] = useState(0);
+    const [requiredMonths, setRequestedMonths] = useState(0);
     const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
     const { id } = useParams();
@@ -29,8 +29,9 @@ const UpdateCreditApplication = () => {
         try {
             const response = await creditApplicationService.get(id);
             const applicationData = response.data;
-            setLoanType(applicationData.loanTypeName);
+            console.log(applicationData);
             setRequestedAmount(applicationData.requestedAmount);
+            setRequestedMonths(applicationData.requiredMonths);
             setLoanDocuments(applicationData.loanTypeName);
             setCreditApplication(response.data);
             const loadedDocuments = {};
@@ -125,10 +126,12 @@ const UpdateCreditApplication = () => {
             let creditApplicationToUpdate = {
                 id,
                 applicationState: 0,
+                clientId: creditApplication.clientId,
                 requestedAmount,
                 comment: "Documentos actualizados",
                 applicationDate: creditApplication.applicationDate,
-                loanType,
+                requiredMonths,
+                loanTypeName: creditApplication.loanTypeName,
             };
     
             for (const docType in documents) {
@@ -141,7 +144,7 @@ const UpdateCreditApplication = () => {
             }
 
             await creditApplicationService.update(id, creditApplicationToUpdate);
-            console.log('Solicitud de crédito actualizada');
+            console.log('Solicitud de crédito actualizada:', creditApplicationToUpdate);
     
             navigate('/creditApplications');
     
@@ -174,6 +177,10 @@ const UpdateCreditApplication = () => {
             <label>
                 Monto solicitado:
                 <input type="number" value={requestedAmount} onChange={(e) => setRequestedAmount(e.target.value)} required />
+            </label>
+            <label>
+                Meses solicitados:
+                <input type="number" value={requiredMonths} onChange={(e) => setRequestedMonths(e.target.value)} required />
             </label>
             {Object.keys(documents).map(docType => (
                 <div key={docType}>

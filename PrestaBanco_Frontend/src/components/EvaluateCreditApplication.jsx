@@ -41,8 +41,8 @@ const EvaluateCreditApplication = () => {
         const loadCreditApplication = async () => {
             try {
                 const response = await creditApplicationService.get(id);
-                const responseData = response.data;
-                setCreditApplication(responseData);
+                setCreditApplication(response.data);
+                console.log(response.data);
 
                 const clientResponse = await clientService.get(response.data.clientId);
                 setClient(clientResponse.data);

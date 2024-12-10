@@ -27,7 +27,7 @@ const CreditApplicationApproval = () => {
                 const response = await creditApplicationService.get(id);
                 const responseData = response.data;
                 setCreditApplication(responseData);
-
+                console.log(responseData);
                 const clientResponse = await clientService.get(responseData.clientId);
                 setClient(clientResponse.data);
                 const loanType = await loanTypeService.getByLoanTypeName(responseData.loanTypeName);

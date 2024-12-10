@@ -4,7 +4,7 @@ metadata:
   name: prestabanco-ingress
 spec:
   rules:
-    - host: 172.21.94.227.nip.io
+    - host: 172.31.132.61.nip.io
       http:
         paths:
           - path: /

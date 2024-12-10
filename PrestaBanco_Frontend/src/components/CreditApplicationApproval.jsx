@@ -67,10 +67,10 @@ const CreditApplicationApproval = () => {
     const handleUpdateComment = async () => {
         const confirmation = window.confirm("¿Estás seguro de que deseas aprobar la solicitud?");
         if (confirmation) {
-            creditApplication.comment = `Fecha de firma contrato propuesta: ${proposedContractDate.toString}`;
+            creditApplication.comment = `Fecha de firma contrato propuesta: ${proposedContractDate.toString()}`;
             console.log("Solicitud a enviar: ",creditApplication);
             try {
-                await creditEvaluationService.updateCommentAndState(creditApplication, `Fecha de firma contrato propuesta: ${proposedContractDate.toString}`, 5);
+                await creditEvaluationService.updateCommentAndState(creditApplication, `Fecha de firma contrato propuesta: ${proposedContractDate.toString()}`, 5);
                 console.log('Aprobación exitosa');
                 navigate("/creditApplications");
             } catch (error) {
