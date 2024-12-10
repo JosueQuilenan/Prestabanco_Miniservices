@@ -51,14 +51,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: credit-follow-up-service
+  name: loan-type-service
   labels:
-    app: credit-follow-up-service
+    app: loan-type-service
 spec:
   selector:
-    app: credit-follow-up-deployment
+    app: loan-type-deployment
   ports:
     - protocol: TCP
       port: 8095
-      targetPort: 8095
+      targetPort: 0
   type: NodePort

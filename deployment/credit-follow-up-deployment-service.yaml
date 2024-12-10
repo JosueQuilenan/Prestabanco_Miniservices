@@ -60,5 +60,5 @@ spec:
   ports:
     - protocol: TCP
       port: 8094
-      targetPort: 8094
+      targetPort: 0
   type: NodePort
