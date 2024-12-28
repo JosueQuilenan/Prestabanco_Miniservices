@@ -4,11 +4,11 @@ spring:
   cloud:
     config:
       enabled: true
-      uri: http://config-server-service:8081
+      uri: http://localhost:8081
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DBNAME}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/prestabanco_credit-follow-ups
+    username: postgres
+    password: admin
   jpa:
     hibernate:
       ddl-auto: update
