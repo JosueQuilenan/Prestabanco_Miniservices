@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -60,20 +61,18 @@ public class LoanTypeController {
     }
 
     @PostMapping("/calculateMonthlyPayment")
-    public ResponseEntity<Double> calculateMonthlyPayment(@RequestParam double requestedAmount,
+    public ResponseEntity<BigDecimal> calculateMonthlyPayment(@RequestParam int requestedAmount,
                                                           @RequestParam int requestedMonths,
-                                                          @RequestParam String loanTypeName) {
-        LoanType loanType = loanTypeService.getLoanTypeByLoanTypeName(loanTypeName);
-        double monthlyPayment = calculatorService.calculateMonthlyPayment(requestedAmount, requestedMonths,loanType);
+                                                          @RequestParam double interestRate) {
+        BigDecimal monthlyPayment = calculatorService.calculateMonthlyPayment(requestedAmount, requestedMonths, interestRate);
         return ResponseEntity.ok(monthlyPayment);
     }
 
     @PostMapping("/calculateTotalLoanCost")
-    public ResponseEntity<Double> calculateTotalLoanCost(@RequestParam double requestedAmount,
-                                                         @RequestParam int requestedMonths,
-                                                         @RequestParam String loanTypeName) {
-        LoanType loanType = loanTypeService.getLoanTypeByLoanTypeName(loanTypeName);
-        double totalCost = calculatorService.calculateTotalLoanCost(requestedAmount, requestedMonths,loanType);
+    public ResponseEntity<BigDecimal> calculateTotalLoanCost(@RequestParam int requestedAmount,
+                                                             @RequestParam int requestedMonths,
+                                                             @RequestParam double interestRate) {
+        BigDecimal totalCost =calculatorService.calculateTotalLoanCost(requestedAmount, requestedMonths, interestRate);
         return ResponseEntity.ok(totalCost);
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -28,9 +30,14 @@ public class CreditEvaluationService {
     // R1 Client Fee to Income ratio ( Required )
     private boolean evalFeeToIncome(CreditApplication creditApplication) {
         double clientIncome = creditApplication.getIncomeProof().getAverageIncomeAmount();
-        double requestedAmount = creditApplication.getRequestedAmount();
-        Double monthlyPayment = fetchMonthlyPayment(requestedAmount,creditApplication.getRequiredMonths(),creditApplication.getLoanTypeName());
-        return (monthlyPayment * 100 / clientIncome) <= 35.00;
+        int requestedAmount = (int) creditApplication.getRequestedAmount();
+        BigDecimal monthlyPayment = fetchMonthlyPayment(requestedAmount, creditApplication.getRequiredMonths(), creditApplication.getInterestRate());
+        BigDecimal clientIncomeBD = BigDecimal.valueOf(clientIncome);
+        BigDecimal percentage = monthlyPayment
+                .multiply(BigDecimal.valueOf(100)) // Multiplicar por 100
+                .divide(clientIncomeBD, 2, RoundingMode.HALF_UP); // Dividir por ingresos con 2 decimales
+
+        return percentage.compareTo(BigDecimal.valueOf(35.00)) <= 0;
     }
 
     // R2 Client credit History
@@ -65,10 +72,11 @@ public class CreditEvaluationService {
         double clientIncome = incomeProof.getAverageIncomeAmount();
         CreditHistory creditHistory = client.getCreditHistory();
         if (creditHistory == null) return false;
-        double totalDebt = creditHistory.getPendingAmount();
-        Double monthlyPayment = fetchMonthlyPayment(totalDebt,creditApplication.getRequiredMonths(),creditApplication.getLoanTypeName());
-        double totalMonthlyDebt = totalDebt + monthlyPayment;
-        double debtToIncomeRatio = totalMonthlyDebt / clientIncome;
+        int totalDebt = creditHistory.getPendingAmount();
+        BigDecimal monthlyPayment = fetchMonthlyPayment(totalDebt, creditApplication.getRequiredMonths(), creditApplication.getInterestRate());
+        BigDecimal totalMonthlyDebt = BigDecimal.valueOf(totalDebt).add(monthlyPayment);
+
+        double debtToIncomeRatio = totalMonthlyDebt.doubleValue() / clientIncome;
         return debtToIncomeRatio <= 0.50;
     }
 
@@ -158,11 +166,11 @@ public class CreditEvaluationService {
         }
     }
 
-    private Double fetchMonthlyPayment(double reqAmount, int reqMonths, String loanType){
-        String url =  "http://loan-type-service/api/loanType/calculateMonthlyPayment?requestedAmount=" + reqAmount + "&requestedMonths="+reqMonths+"&loanTypeName="+loanType;
-        Double monthlyPayment;
+    private BigDecimal fetchMonthlyPayment(int reqAmount, int reqMonths, double interestRate){
+        String url =  "http://loan-type-service/api/loanType/calculateMonthlyPayment?requestedAmount=" + reqAmount + "&requestedMonths="+reqMonths+"&interestRate="+ interestRate;
+        BigDecimal monthlyPayment;
         try{
-            ResponseEntity<Double> response = restTemplate.postForEntity(url,null, Double.class);
+            ResponseEntity<BigDecimal> response = restTemplate.postForEntity(url,null, BigDecimal.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 monthlyPayment = response.getBody();
             }
@@ -238,6 +246,24 @@ public class CreditEvaluationService {
             throw new RuntimeException("Error while calling LoanTypeService: " + e.getMessage(), e);
         }
         return loanType;
+    }
+
+    private CreditApplication fetchCreditApplication(long id){
+        String url= "http://credit-application-service/api/application/" + id;
+        CreditApplication creditApplication;
+
+        try{
+            ResponseEntity<CreditApplication> response = restTemplate.getForEntity(url, CreditApplication.class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                creditApplication= response.getBody();
+            }
+            else{
+                throw new RuntimeException("Failed to fetch credit application");
+            }
+        }catch (Exception e){
+            throw new RuntimeException("Error while calling credit application Service: " + e.getMessage(), e);
+        }
+        return creditApplication;
     }
 
     public void updateAndAddComment(CreditApplication creditApplication, String comment, int state){

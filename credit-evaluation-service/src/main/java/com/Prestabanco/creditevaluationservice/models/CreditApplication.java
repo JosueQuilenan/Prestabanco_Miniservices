@@ -33,6 +33,7 @@ public class CreditApplication {
     private double requestedAmount;
     private LocalDate applicationDate;
     private String comment;
+    private double interestRate;
 
     // Agregar años que quiere (seleccionar entre el rango de loanType)
     private int requiredMonths;

@@ -110,8 +110,8 @@ const ClientDetails = () => {
     const calculateCosts = async () => {
         if (selectedCreditApplication) {
             try {
-                const monthlyPaymentResult = await loanTypeService.calculateMonthlyPayment(selectedCreditApplication.requestedAmount,selectedCreditApplication.requiredMonths, selectedCreditApplication.loanTypeName);
-                const totalCostResult = await loanTypeService.calculateTotalLoanCost(selectedCreditApplication.requestedAmount, selectedCreditApplication.requiredMonths,selectedCreditApplication.loanTypeName);
+                const monthlyPaymentResult = await loanTypeService.calculateMonthlyPayment(selectedCreditApplication.requestedAmount,selectedCreditApplication.requiredMonths, selectedCreditApplication.interestRate);
+                const totalCostResult = await loanTypeService.calculateTotalLoanCost(selectedCreditApplication.requestedAmount, selectedCreditApplication.requiredMonths,selectedCreditApplication.interestRate);
                 
                 setMonthlyPayment(monthlyPaymentResult.data);
                 setTotalCost(totalCostResult.data);

@@ -24,15 +24,15 @@ const getByLoanTypeName = loanTypeName => {
     return httpClient.get(`/api/loanType/byLoanType?loanTypeName=${loanTypeName}`);
 }
 
-const calculateMonthlyPayment = (requestedAmount, requestedMonths, loanTypeName) => {
+const calculateMonthlyPayment = (requestedAmount, requestedMonths, interestRate) => {
     return httpClient.post("/api/loanType/calculateMonthlyPayment", null, {
-        params: { requestedAmount, requestedMonths, loanTypeName }
+        params: { requestedAmount, requestedMonths, interestRate }
     });
 }
 
-const calculateTotalLoanCost = (requestedAmount, requestedMonths, loanTypeName) => {
+const calculateTotalLoanCost = (requestedAmount, requestedMonths, interestRate) => {
     return httpClient.post("/api/loanType/calculateTotalLoanCost", null, {
-        params: { requestedAmount, requestedMonths, loanTypeName }
+        params: { requestedAmount, requestedMonths, interestRate }
     });
 }
 

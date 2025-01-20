@@ -19,6 +19,10 @@ const CreditApplicationList = () => {
         8: "En desembolso"
     };
 
+    const formatNumber = (value) => {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    };
+
     useEffect(() => {
         creditApplicationService.getAll().then(response => {
             const filteredApplications = response.data.filter(app => 

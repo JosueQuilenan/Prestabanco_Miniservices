@@ -23,6 +23,7 @@ public class CreditApplication {
     private int applicationState;
     private double requestedAmount;
     private int requiredMonths;
+    private double interestRate;
     private LocalDate applicationDate;
     private String comment;
     private Long clientId;

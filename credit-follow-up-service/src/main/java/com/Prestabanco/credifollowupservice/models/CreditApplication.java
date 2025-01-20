@@ -24,7 +24,7 @@ public class CreditApplication {
     private double requestedAmount;
     private LocalDate applicationDate;
     private String comment;
-
+    private double interestRate;
     private int requiredMonths;
 
     @JsonBackReference(value = "client-credit-applications")
